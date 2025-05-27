@@ -1,0 +1,19 @@
+# MCP-Mem0 Requirements
+# Python 3.12+ required
+
+# Core dependencies
+httpx>=0.28.1
+mcp[cli]>=1.3.0
+mem0ai>=0.1.88
+vecs>=0.4.5
+
+# Additional dependencies
+python-dotenv>=1.0.0
+aiohttp>=3.9.0
+
+# Development dependencies (optional)
+# pytest>=7.4.0
+# pytest-asyncio>=0.21.0
+# black>=23.0.0
+# ruff>=0.1.0
+# mypy>=1.8.0

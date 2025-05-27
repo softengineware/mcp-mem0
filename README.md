@@ -4,6 +4,10 @@
   <img src="public/Mem0AndMCP.png" alt="Mem0 and MCP Integration" width="600">
 </p>
 
+<p align="center">
+  <strong>✨ NEW: Automatic conversation memory - Save important discussions with a simple command!</strong>
+</p>
+
 A template implementation of the [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server integrated with [Mem0](https://mem0.ai) for providing AI agents with persistent memory capabilities.
 
 Use this as a reference point to build your MCP servers yourself, or give this as an example to an AI coding assistant and tell it to follow this example for structure and code correctness!
@@ -16,11 +20,14 @@ The implementation follows the best practices laid out by Anthropic for building
 
 ## Features
 
-The server provides three essential memory management tools:
+The server provides essential memory management tools:
 
 1. **`save_memory`**: Store any information in long-term memory with semantic indexing
 2. **`get_all_memories`**: Retrieve all stored memories for comprehensive context
 3. **`search_memories`**: Find relevant memories using semantic search
+4. **`save_conversation_turn`**: Save complete Q&A exchanges (Auto Memory feature)
+5. **`get_conversation_summary`**: Get statistics about saved conversations
+6. **`auto_save_message`**: Internal tool for automatic message saving
 
 ## Prerequisites
 
@@ -200,6 +207,69 @@ Add this server to your MCP configuration for Claude Desktop, Windsurf, or any o
   }
 }
 ```
+
+## Usage Examples
+
+Once connected to an MCP client, you can use these commands:
+
+### Basic Memory Operations
+
+```
+"Remember that my favorite programming language is Python"
+"Save this information: The project deadline is next Friday"
+"What do you remember about my programming preferences?"
+"Show me all my saved memories"
+```
+
+### Auto Memory Features (NEW)
+
+```
+"Save this conversation" - Saves the current Q&A exchange
+"Remember our discussion about Docker" - Saves specific conversation turns
+"Find our previous discussion about API design" - Searches past conversations
+"Summarize today's conversations" - Gets conversation statistics
+```
+
+### Advanced Search
+
+```
+"Search my memories for information about authentication"
+"What did we discuss about database optimization?"
+"Find all memories related to Python decorators"
+```
+
+## Auto Memory Setup
+
+For automatic conversation memory features:
+
+1. **Quick Setup**:
+   ```bash
+   cd ~/mcp-mem0
+   ./auto_start.sh
+   ```
+
+2. **Interactive Setup Guide**:
+   ```bash
+   python src/claude_integration.py
+   ```
+
+3. **Manual Configuration**:
+   Add the auto memory server to your MCP client config:
+   ```json
+   {
+     "mcpServers": {
+       "auto_mem0": {
+         "command": "python",
+         "args": ["~/mcp-mem0/src/auto_memory.py"],
+         "env": {
+           "TRANSPORT": "stdio"
+         }
+       }
+     }
+   }
+   ```
+
+See [AUTO_MEMORY.md](AUTO_MEMORY.md) for detailed auto memory documentation.
 
 ## Building Your Own Server
 

@@ -1,5 +1,12 @@
 from mem0 import Memory
 import os
+import logging
+from typing import Optional
+
+from exceptions import ConfigurationError, ConnectionError, LLMProviderError
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 # Custom instructions for memory processing
 # These aren't being used right now but Mem0 does support adding custom prompting
@@ -14,12 +21,33 @@ Extract the Following Information:
 - Source: Record where this information came from when applicable.
 """
 
-def get_mem0_client():
+def get_mem0_client() -> Memory:
+    """
+    Initialize and return a configured Mem0 Memory client.
+    
+    Returns:
+        Memory: Configured Memory client instance
+        
+    Raises:
+        ConfigurationError: If required configuration is missing
+        LLMProviderError: If LLM provider configuration is invalid
+        ConnectionError: If connection to services fails
+    """
     # Get LLM provider and configuration
     llm_provider = os.getenv('LLM_PROVIDER')
     llm_api_key = os.getenv('LLM_API_KEY')
     llm_model = os.getenv('LLM_CHOICE')
     embedding_model = os.getenv('EMBEDDING_MODEL_CHOICE')
+    
+    # Validate required configuration
+    if not llm_provider:
+        raise ConfigurationError("LLM_PROVIDER environment variable is required")
+    
+    if llm_provider in ['openai', 'openrouter'] and not llm_api_key:
+        raise ConfigurationError(f"LLM_API_KEY is required for {llm_provider} provider")
+    
+    if not llm_model:
+        raise ConfigurationError("LLM_CHOICE environment variable is required")
     
     # Initialize config dictionary
     config = {}
@@ -87,10 +115,14 @@ def get_mem0_client():
             config["embedder"]["config"]["ollama_base_url"] = embedding_base_url
     
     # Configure Supabase vector store
+    database_url = os.environ.get('DATABASE_URL', '')
+    if not database_url:
+        raise ConfigurationError("DATABASE_URL environment variable is required")
+    
     config["vector_store"] = {
         "provider": "supabase",
         "config": {
-            "connection_string": os.environ.get('DATABASE_URL', ''),
+            "connection_string": database_url,
             "collection_name": "mem0_memories",
             "embedding_model_dims": 1536 if llm_provider == "openai" else 768
         }
@@ -99,4 +131,11 @@ def get_mem0_client():
     # config["custom_fact_extraction_prompt"] = CUSTOM_INSTRUCTIONS
     
     # Create and return the Memory client
-    return Memory.from_config(config)
+    try:
+        logger.info(f"Initializing Mem0 client with {llm_provider} provider")
+        client = Memory.from_config(config)
+        logger.info("Successfully initialized Mem0 client")
+        return client
+    except Exception as e:
+        logger.error(f"Failed to initialize Mem0 client: {str(e)}")
+        raise ConnectionError(f"Failed to initialize Mem0 client: {str(e)}")
