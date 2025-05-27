@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "mcp-mem0": {
+      "command": "python",
+      "args": ["/Users/branchechols/mcp-mem0/src/main.py"],
+      "env": {
+        "TRANSPORT": "stdio",
+        "LLM_PROVIDER": "openai",
+        "LLM_BASE_URL": "https://api.openai.com/v1",
+        "LLM_API_KEY": "YOUR_OPENAI_API_KEY",
+        "LLM_CHOICE": "gpt-4o-mini",
+        "EMBEDDING_MODEL_CHOICE": "text-embedding-3-small",
+        "DATABASE_URL": "YOUR_SUPABASE_DATABASE_URL"
+      }
+    },
+    "mcp-mem0-auto": {
+      "command": "python",
+      "args": ["/Users/branchechols/mcp-mem0/src/auto_memory.py"],
+      "env": {
+        "TRANSPORT": "stdio",
+        "LLM_PROVIDER": "openai",
+        "LLM_BASE_URL": "https://api.openai.com/v1",
+        "LLM_API_KEY": "YOUR_OPENAI_API_KEY",
+        "LLM_CHOICE": "gpt-4o-mini",
+        "EMBEDDING_MODEL_CHOICE": "text-embedding-3-small",
+        "DATABASE_URL": "YOUR_SUPABASE_DATABASE_URL"
+      }
+    }
+  }
+}
